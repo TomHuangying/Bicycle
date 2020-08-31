@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace：该mapper映射文件的 唯一标识符    -->
+<mapper namespace="com.match10.mapper.ApplyMapper">
+    <insert id="insertRace" parameterType="com.match10.pojo.Applys">
+        insert into user_race values(#{user_id},#{race_id})
+    </insert>
+
+<!--    取消比赛 -->
+    <delete id="delRace" parameterType="com.match10.pojo.Applys">
+        delete from user_race where user_id=#{user_id} and race_id=#{race_id};
+    </delete>
+
+    <!--    查看比赛信息 -->
+    <select id="selRace" resultType="com.match10.pojo.Users">
+        select race.name,race.id from race,user_race where user_race.user_id =#{user_id} and  user_race.race_id = race.id;
+    </select>
+
+</mapper>

@@ -1,0 +1,470 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <!-- 页面meta -->
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>后台管理系统</title>
+        <meta name="description" content="后台管理系统">
+        <meta name="keywords" content="后台管理系统">
+        <meta content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no" name="viewport">
+        <!-- 引入样式 -->
+        <link rel="stylesheet" href="../plugins/elementui/index.css">
+        <link rel="stylesheet" href="../plugins/font-awesome/css/font-awesome.min.css">
+        <link rel="stylesheet" href="../css/style.css">
+    </head>
+    <body class="hold-transition">
+        <div id="app">
+            <div class="content-header">
+                <h1 align="center">自行车比赛管理系统</h1>
+            </div>
+            <div class="app-container">
+                <div class="box">
+                    <div class="filter-container">
+                        <el-button type="primary" class="butT" @click="handleCreate()">新建比赛</el-button>
+                    </div>
+                    <el-table size="small" current-row-key="id" :data="dataList" stripe highlight-current-row>
+                        <el-table-column type="index" align="center" label="序号"></el-table-column>
+                        <el-table-column prop="name" label="主题" align="center"></el-table-column>
+                        <el-table-column prop="type" label="赛事类型" align="center"></el-table-column>
+                        <el-table-column prop="site" label="比赛地点" align="center"></el-table-column>
+                        <el-table-column prop="startTime" label="开始时间" align="center"></el-table-column>
+                        <el-table-column prop="endTime" label="报名截止时间" align="center"></el-table-column>
+                        <el-table-column prop="registerNumber" label="报名人数" align="center"></el-table-column>
+                        <el-table-column prop="maxNumber" label="人数上限" align="center"></el-table-column>
+                        <el-table-column label="操作" align=*center">
+                            <template slot-scope="scope">
+                                <el-button type="primary" size="mini" @click="handleUpdate(scope.row)">编辑</el-button>
+                                <el-button size="mini" type="danger" @click="handleDelete(scope.row)">删除</el-button>
+                            </template>
+                        </el-table-column>
+                    </el-table>
+                    <div class="pagination-container">
+                        <!--分页标签-->
+                        <el-pagination
+                            class="pagiantion"
+                            @current-change="handleCurrentChange"
+                            :current-page="pagination.currentPage"
+                            :page-size="pagination.pageSize"
+                            layout="total, prev, pager, next, jumper"
+                            :total="pagination.total">
+                        </el-pagination>
+                    </div>
+                    <!-- 新增标签弹层 -->
+                    <div class="add-form">
+                        <el-dialog title="新增比赛" :visible.sync="dialogFormVisible">
+                            <el-form ref="dataAddForm" :model="formData"  label-position="right" label-width="100px">
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="比赛主题" prop="name">
+                                            <el-input v-model="formData.name"/>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="人数上限" prop="maxNumber">
+                                            <el-input v-model="formData.maxNumber"/>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="比赛路线">
+                                            <el-input v-model="formData.route"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="已报名人数">
+                                            <el-input v-model="formData.registerNumber"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="赛事类型">
+                                            <el-select v-model="formData.type">
+                                                <el-option label="公路赛" value="1"></el-option>
+                                                <el-option label="山地赛" value="2"></el-option>
+                                            </el-select>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="开始时间">
+                                            <el-input v-model="formData.startTime"/>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="比赛地点">
+                                            <el-select v-model="formData.site">
+                                                <el-option label="哈尔滨" value="1"></el-option>
+                                                <el-option label="沈阳" value="2"></el-option>
+                                                <el-option label="长春" value="3"></el-option>
+                                                <el-option label="北京" value="4"></el-option>
+                                                <el-option label="上海" value="5"></el-option>
+                                                <el-option label="天津" value="6"></el-option>
+                                            </el-select>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="报名截止时间">
+                                            <el-input v-model="formData.endTime"/>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="举办单位">
+                                            <el-input v-model="formData.sponsor"/>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="协办单位">
+                                            <el-input v-model="formData.assistant"/>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="赞助单位">
+                                            <el-input v-model="formData.support"/>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="指导单位">
+                                            <el-input v-model="formData.guidance"/>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="24">
+                                        <el-form-item label="举办方手机号">
+                                            <el-input v-model="formData.telephone"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="24">
+                                        <el-form-item label="举办方邮箱">
+                                            <el-input v-model="formData.email"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                            </el-form>
+                            <div slot="footer" class="dialog-footer">
+                                <el-button @click="dialogFormVisible = false">取消</el-button>
+                                <el-button type="primary" @click="handleAdd()">确定</el-button>
+                            </div>
+                        </el-dialog>
+                    </div>
+
+                    <!-- 编辑标签弹层 -->
+                    <div class="add-form">
+                        <el-dialog title="编辑比赛项" :visible.sync="dialogFormVisible4Edit">
+                            <el-form ref="dataEditForm" :model="formData" label-position="right" label-width="100px">
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="比赛主题" prop="name">
+                                            <el-input v-model="formData.name"/>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="人数上限" prop="maxNumber">
+                                            <el-input v-model="formData.maxNumber"/>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="比赛路线">
+                                            <el-input v-model="formData.route"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="已报名人数">
+                                            <el-input v-model="formData.registerNumber"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="赛事类型">
+                                            <el-select v-model="formData.type">
+                                                <el-option label="公路赛" value="1"></el-option>
+                                                <el-option label="城市赛" value="2"></el-option>
+                                            </el-select>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="开始时间">
+                                            <el-input v-model="formData.startTime"/>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="比赛地点">
+                                            <el-select v-model="formData.site">
+                                                <el-option label="哈尔滨" value="1"></el-option>
+                                                <el-option label="沈阳" value="2"></el-option>
+                                                <el-option label="长春" value="3"></el-option>
+                                                <el-option label="北京" value="4"></el-option>
+                                                <el-option label="上海" value="5"></el-option>
+                                                <el-option label="天津" value="6"></el-option>
+                                            </el-select>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="报名截止时间">
+                                            <el-input v-model="formData.endTime"/>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="举办单位">
+                                            <el-input v-model="formData.sponsor"/>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="协办单位">
+                                            <el-input v-model="formData.assistant"/>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="12">
+                                        <el-form-item label="赞助单位">
+                                            <el-input v-model="formData.support"/>
+                                        </el-form-item>
+                                    </el-col>
+                                    <el-col :span="12">
+                                        <el-form-item label="指导单位">
+                                            <el-input v-model="formData.guidance"/>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="24">
+                                        <el-form-item label="举办方手机号">
+                                            <el-input v-model="formData.telephone"></el-input>
+                                        </el-form-item>
+                                    </el-col>
+                                </el-row>
+                                <el-row>
+                                    <el-col :span="24">
+                                        <el-form-item label="举办方邮箱">
+                                            <el-input v-model="formData.email"></el-input>
+                                     </el-form-item>
+                                    </el-col>
+                                </el-row>
+                            </el-form>
+                    <div slot="footer" class="dialog-footer">
+                        <el-button @click="dialogFormVisible4Edit = false">取消</el-button>
+                        <el-button type="primary" @click="handleEdit()">确定</el-button>
+                    </div>
+                    </el-dialog>
+                </div>
+                </div>
+            </div>
+        </div>
+    </body>
+    <!-- 引入组件库 -->
+    <script src="../js/vue.js"></script>
+    <script src="../plugins/elementui/index.js"></script>
+    <script type="text/javascript" src="../js/jquery.min.js"></script>
+    <script src="../js/axios-0.18.0.js"></script>
+    <script>
+        var vue = new Vue({
+            el: '#app',
+            data:{
+                formValidate:null,
+                backend_url:"http://localhost:8080",//服务器地址
+                pagination: {//分页相关模型数据
+                    currentPage: 1,//当前页码
+                    pageSize:5,//每页显示的记录数
+                    total:0,//总记录数
+                    queryString:null//查询条件
+                },
+				dataList: [],//当前页要展示的分页列表数据
+                formData: {},//表单数据
+                dialogFormVisible: false,//增加表单是否可见
+                dialogFormVisible4Edit:false,//编辑表单是否可见
+            },
+            //钩子函数，VUE对象初始化完成后自动执行
+            created() {
+                this.findPage();
+            },
+            methods: {
+                //权限不足提示
+                showMessage(r){
+                         console.log(r);
+                         if (r.message.indexOf("403") != -1){
+                             this.$message.error("权限不足");
+                         } else{
+                             this.$message.error("权限不足，请登录后再访问！");
+                         }
+                 },
+                //编辑比赛项
+                /*
+                    1.重置表单数据，弹出表单
+                    2.发送axios请求，携带表单数据
+                        编辑成功，显示成功信息
+                        编辑失败，显示失败信息
+                    3.关闭当前窗口，刷新页面
+                */
+                handleEdit() {
+                            axios.post(this.backend_url+"/raceitem/editRace.do",this.formData).then((response)=>{
+                                //加跨域请求的权限验证(携带用户cookie的权限信息)
+                                axios.defaults.withCredentials = true;
+                                if (response.data.flag){
+                                    // 编辑成功
+                                    this.$message({
+                                       message:response.data.message,
+                                       type:'success'
+                                    });
+                                }else{
+                                    // 编辑失败
+                                    this.$message.error(response.data.message);
+                                }
+                                // 关闭当前窗口
+                                this.dialogFormVisible4Edit = false;
+                                // 刷新当前页面
+                                this.findPage();
+                   }).catch((r)=>{
+                        this.showMessage(r);
+                    });
+                },
+                //表单点击确认-->新建比赛
+                /*
+                    1.发送axios请求，传递表单数据
+                    2.操作成功，提示操作成功，关闭当前窗口，刷新页面
+                    3.操作失败，提示操作失败
+
+                */
+                handleAdd () {
+                       axios.post(this.backend_url+"/raceitem/addRace.do",this.formData).then((response) =>{
+                           axios.defaults.withCredentials = true;
+                           if(response.data.flag){
+                               // 操作成功
+                               this.$message({
+                                  message:response.data.message,
+                                  type:"success"
+                               });
+                               // 关闭当前窗口
+                               this.dialogFormVisible = false;
+                               // 刷新当前页面
+                               this.findPage();
+                           }else{
+                               // 操作失败
+                               this.$message.error(response.data.message);
+                           }
+                       }).catch((r)=>{
+                           this.showMessage(r);
+                       }).finally(()=>{
+                         this.findPage();
+                       });
+                },
+                //分页查询
+                /*
+                    1.发送三个数据：
+                        当前页数
+                        单页页面数据的个数
+                        查询条件
+                    2.返回两个数据：
+                        当前页显示的数据
+                        总数据个数
+                */
+                findPage() {
+                    // 查询条件，必须初始化为第1页
+                    axios.defaults.withCredentials = true;
+                    if(this.pagination.queryString != null){
+                        this.pagination.currentPage = 1;
+                    }
+                    //封装请求参数
+                    var params = {
+                        currentPage:this.pagination.currentPage,
+                        pageSize: this.pagination.pageSize,
+                        queryString: this.pagination.queryString
+                    };
+                    axios.defaults.withCredentials = true;
+                    axios.post(this.backend_url+"/raceitem/findPage.do",params).then((response) => {
+                        console.log(response.data);
+                        this.dataList = response.data.rows;
+                        this.pagination.total = response.data.total;
+                    });
+                },
+                // 重置表单
+                resetForm(formName) {
+                    //this.formData = {};
+                    this.$nextTick(function() {
+                        this.$refs[formName].resetFields();
+                    });
+                },
+                // 点击新建比赛
+                handleCreate() {
+                    this.formData={};//清空表单数据
+                    this.resetForm("dataAddForm");//重置表单数据
+                    this.dialogFormVisible = true;//显示表单页面
+                },
+                // 弹出编辑窗口
+                /*
+                    1.显示表单页面
+                    2.发送请求，查询当前行数据
+                    3.进行回显
+                 */
+                handleUpdate(row) {
+                    this.dialogFormVisible4Edit = true;
+                    axios.defaults.withCredentials = true;
+                    // 回显数据
+                    axios.get(this.backend_url+"/raceitem/findRaceById.do?id="+row.id).then((response)=>{
+                        if (response.data.flag){
+                            this.formData = response.data.data;
+                        }else{
+                            this.$message.error(response.data.message);
+                        }
+                    }).catch((r)=>{
+                        this.showMessage(r);
+                    });
+                },
+                //切换页码
+                handleCurrentChange(currentPage) {
+                  this.pagination.currentPage = currentPage;
+                  this.findPage();
+                },
+                // 删除(根据当前行数据id删除)
+                /*
+                    1.弹出提示框，是否删除
+                    2.确定->发送axios请求，传递当前行数据的id
+                    3.判断是否删除成功
+                        成功，重新刷新当前页面，提示删除成功
+                        失败，提示删除失败信息
+                 */
+                handleDelete(row) {
+                    this.$confirm("确定要删除吗?","提示信息",{type:"warning"}).then(()=>{
+                        console.log("执行删除...."+row.id);
+                        axios.defaults.withCredentials = true;
+                        axios.get(this.backend_url+"/raceitem/delete.do?id="+row.id).then((response)=>{
+                                if(response.data.flag){
+                                    // 删除成功
+                                    this.findPage();
+                                    this.$message({
+                                        message:response.data.message,
+                                        type:'success'
+                                    });
+                                }else{
+                                    // 删除失败
+                                    this.$message.error(response.data.message);
+                                }
+                        }).catch((r)=>{
+                            this.showMessage(r);
+                        });
+                    }).catch(()=> {
+                        //点击取消按钮执行此代码
+                        this.$message('操作已取消');
+                    });
+                }
+            }
+        })
+    </script>
+</html>

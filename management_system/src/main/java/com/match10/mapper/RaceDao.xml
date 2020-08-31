@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.match10.dao.RaceDao">
+
+    <!--添加比赛-->
+    <insert id="addRace" parameterType="com.match10.pojo.Race">
+        insert into race values (null,#{name},#{site},#{route},#{maxNumber},#{registerNumber},#{type},#{startTime},#{endTime},#{telephone},#{email},#{sponsor},#{assistant},#{support},#{guidance})
+    </insert>
+    <!--编辑比赛-->
+    <update id="editRace" parameterType="com.match10.pojo.Race">
+        update race
+        set name=#{name},site=#{site},route=#{route},maxNumber=#{maxNumber},registerNumber=#{registerNumber},type=#{type},startTime=#{startTime},endTime=#{endTime},telephone=#{telephone},email=#{email},sponsor=#{sponsor},assistant=#{assistant},support=#{support},guidance=#{guidance}
+        where id=#{id}
+    </update>
+    <!--删除比赛-->
+    <delete id="deleteRaceById" parameterType="integer">
+        delete from race where id=#{id}
+    </delete>
+    <!--分页查询-->
+    <select id="findPageByCondition" resultType="com.match10.pojo.Race" parameterType="string">
+        SELECT * FROM race
+    </select>
+    <!--根据id查询比赛信息-->
+    <select id="findRaceById" resultType="com.match10.pojo.Race" parameterType="integer">
+        select * from race where id=#{id}
+    </select>
+
+</mapper>

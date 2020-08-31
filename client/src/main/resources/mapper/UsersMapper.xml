@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- namespace：该mapper映射文件的 唯一标识符    -->
+<mapper namespace="com.match10.mapper.UsersMapper">
+<!--	<resultMap id="BaseResultMap" type="com.match10.pojo.Users">-->
+<!--		<result column="username" jdbcType="VARCHAR" property="username" />-->
+<!--		<result column="password" jdbcType="VARCHAR" property="password" />-->
+<!--&lt;!&ndash;		<result column="sex" jdbcType="VARCHAR" property="sex" />&ndash;&gt;-->
+<!--&lt;!&ndash;		<result column="age" jdbcType="INT" property="age" />&ndash;&gt;-->
+<!--&lt;!&ndash;		<result column="telephone" jdbcType="VARCHAR" property="telephone" />&ndash;&gt;-->
+<!--	</resultMap>-->
+
+<!--	<select id="sel" resultMap="BaseResultMap">-->
+<!--		select username, password from user-->
+<!--	</select>-->
+
+<!--	注册 -->
+    <insert id="insertUser" parameterType="com.match10.pojo.Users">
+        insert into user(username,password,sex,age,telephone) values(#{username},#{password},#{sex},#{age},#{telephone})
+    </insert>
+<!-- 登录-->
+	<select id="login" resultType="com.match10.pojo.Users">
+		select password from user where username=#{username}
+	</select>
+
+<!-- 查询id -->
+    <select id="selId" resultType="com.match10.pojo.Users">
+        select id from user where username=#{username}
+    </select>
+
+
+
+<!--    查询用户名是否重复-->
+
+
+<!--    查看比赛信息 -->
+    <select id="selRace" resultType="com.match10.pojo.Users">
+        select race.name,race.id from race,user,user_race where race.id = user_race.race_id and user_race.user_id = user.id and user.username=#{username};
+    </select>
+
+	<!--查询所有用户
+	<select id="selectUsersAll" resultType="com.match10.pojo.Users">
+		select id,username,age from users
+	</select>
+	-->
+
+	<!-- 更新用户之前的查询
+	<select id="selectUsersById" resultType="com.match10.pojo.Users">
+		select id,username,age from users whrer id = #{value}
+	</select>
+	-->
+
+</mapper>
